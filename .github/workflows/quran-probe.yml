@@ -1,12 +1,11 @@
-name: quran-probe
+# Manual check of the live audio catalogue (counts, completeness, a sample HEAD request).
+# Run from the Actions tab before a release to confirm what the store listing may claim.
+name: quran-catalogue-check
 on:
-  push:
-    branches: [claude/quran-audio-android-app-jogbp4]
-    paths: ['.github/workflows/quran-probe.yml', '.github/scripts/probe.py']
   workflow_dispatch:
 jobs:
-  probe:
+  check:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - run: python3 .github/scripts/probe.py
