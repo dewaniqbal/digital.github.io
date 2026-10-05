@@ -16,7 +16,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.LibraryMusic
+import androidx.compose.material.icons.filled.LibraryMusic
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.People
 import androidx.compose.material.icons.filled.Search
@@ -94,7 +94,7 @@ private val topLevels = listOf(
     TopLevel(HomeRoute, HomeRoute::class, R.string.nav_home, Icons.Filled.Home),
     TopLevel(RecitersRoute, RecitersRoute::class, R.string.nav_reciters, Icons.Filled.People),
     TopLevel(SearchRoute, SearchRoute::class, R.string.nav_search, Icons.Filled.Search),
-    TopLevel(LibraryRoute, LibraryRoute::class, R.string.nav_playlists, Icons.AutoMirrored.Filled.LibraryMusic),
+    TopLevel(LibraryRoute, LibraryRoute::class, R.string.nav_playlists, Icons.Filled.LibraryMusic),
     TopLevel(SettingsRoute, SettingsRoute::class, R.string.nav_settings, Icons.Filled.Settings),
 )
 

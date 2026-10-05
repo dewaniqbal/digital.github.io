@@ -1,6 +1,8 @@
 package app.quranaudio.playback
 
 import android.content.Context
+import androidx.annotation.OptIn
+import androidx.media3.common.util.UnstableApi
 import androidx.media3.common.AudioAttributes
 import androidx.media3.common.C
 import androidx.media3.common.MediaItem
@@ -35,6 +37,7 @@ import javax.inject.Singleton
  *    headphones) and, if the user chooses, whenever the Quran stops.
  *  - Its gain is capped relative to the Quran gain (see AudioMix) and changes are faded.
  */
+@OptIn(UnstableApi::class)
 @Singleton
 class AmbientSoundController @Inject constructor(
     @ApplicationContext private val context: Context,
