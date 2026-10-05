@@ -58,7 +58,7 @@ jobs:
           PY
           ls -la app/build/outputs/apk/release/ app/build/outputs/apk/debug/
           grep -c '<issue' app/build/reports/lint-results-debug.xml || true
-          echo "ROOM_SCHEMA_BEGIN"; cat app/schemas/app.quranaudio.data.db.AppDatabase/1.json; echo; echo "ROOM_SCHEMA_END"
+          test -f app/schemas/app.quranaudio.data.db.AppDatabase/1.json && echo "Room schema v1 exported"
       - name: Upload debug APK
         uses: actions/upload-artifact@v4
         with:

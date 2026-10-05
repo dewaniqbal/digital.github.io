@@ -6,6 +6,9 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.clickable
+import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -19,8 +22,6 @@ import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.automirrored.filled.QueueMusic
 import androidx.compose.material.icons.filled.ExpandMore
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -264,16 +265,9 @@ fun CollectionScreen(
             item {
                 Column(Modifier.padding(horizontal = Spacing.screen)) {
                     Text(stringResource(style.description), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                    Box {
-                        TextButton(onClick = { pickerOpen = true }, enabled = state.reciters.isNotEmpty()) {
-                            Text(stringResource(R.string.collection_reciter, state.reciter?.name ?: "—"))
-                            Icon(Icons.Filled.ExpandMore, contentDescription = null)
-                        }
-                        DropdownMenu(expanded = pickerOpen, onDismissRequest = { pickerOpen = false }) {
-                            state.reciters.forEach { r ->
-                                DropdownMenuItem(text = { Text(r.name) }, onClick = { viewModel.selectReciter(r.id); pickerOpen = false })
-                            }
-                        }
+                    TextButton(onClick = { pickerOpen = true }, enabled = state.reciters.isNotEmpty()) {
+                        Text(stringResource(R.string.collection_reciter, state.reciter?.name ?: "—"))
+                        Icon(Icons.Filled.ExpandMore, contentDescription = null)
                     }
                 }
             }
@@ -299,4 +293,32 @@ fun CollectionScreen(
         }
     }
     menuFor?.let { t -> TrackActionsSheet(t, onDismiss = { menuFor = null }) }
+    if (pickerOpen) {
+        ReciterPickerSheet(
+            reciters = state.reciters,
+            selectedId = state.reciter?.id,
+            onSelect = { viewModel.selectReciter(it); pickerOpen = false },
+            onDismiss = { pickerOpen = false },
+        )
+    }
+}
+
+/** Lazily rendered reciter chooser (the catalogue has ~170 complete reciters). */
+@OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
+@Composable
+private fun ReciterPickerSheet(reciters: List<app.quranaudio.domain.Reciter>, selectedId: String?, onSelect: (String) -> Unit, onDismiss: () -> Unit) {
+    androidx.compose.material3.ModalBottomSheet(onDismissRequest = onDismiss) {
+        Text(stringResource(R.string.surah_choose_reciter), style = MaterialTheme.typography.titleMedium, modifier = Modifier.padding(horizontal = Spacing.screen, vertical = Spacing.sm))
+        LazyColumn(Modifier.navigationBarsPadding()) {
+            items(reciters, key = { it.id }) { r ->
+                androidx.compose.material3.ListItem(
+                    headlineContent = { Text(r.name) },
+                    supportingContent = r.nameArabic?.let { { Text(it) } },
+                    leadingContent = { app.quranaudio.ui.components.ReciterArtwork(r.id, r.name, 40.dp) },
+                    trailingContent = { androidx.compose.material3.RadioButton(selected = r.id == selectedId, onClick = null) },
+                    modifier = Modifier.clickable { onSelect(r.id) },
+                )
+            }
+        }
+    }
 }

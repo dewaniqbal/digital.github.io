@@ -4,7 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -57,6 +57,7 @@ import app.quranaudio.ui.theme.ArabicNameStyle
 import app.quranaudio.ui.theme.Spacing
 import kotlinx.coroutines.launch
 
+@OptIn(androidx.compose.foundation.layout.ExperimentalLayoutApi::class)
 @Composable
 fun ReciterScreen(
     contentPadding: PaddingValues,
@@ -86,7 +87,10 @@ fun ReciterScreen(
                             Text(reciter.name, style = MaterialTheme.typography.headlineMedium, textAlign = TextAlign.Center, modifier = Modifier.semantics { heading() })
                             reciter.nameArabic?.let { Text(it, style = ArabicNameStyle, color = MaterialTheme.colorScheme.onSurfaceVariant) }
                             Spacer(Modifier.height(Spacing.xs))
-                            Row(horizontalArrangement = Arrangement.spacedBy(Spacing.xs), verticalAlignment = Alignment.CenterVertically) {
+                            FlowRow(
+                                horizontalArrangement = Arrangement.spacedBy(Spacing.xs, Alignment.CenterHorizontally),
+                                itemVerticalAlignment = Alignment.CenterVertically,
+                            ) {
                                 reciter.styles.forEach { Chip(styleLabel(it)) }
                                 reciter.country?.let { Chip(it) }
                                 Chip(

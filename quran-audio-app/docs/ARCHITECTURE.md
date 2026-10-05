@@ -85,7 +85,8 @@ of the Quran gain; assets are mastered at −6 dBFS peak, so the mix cannot clip
 
 User tables reference catalogue rows by stable string ids **without foreign keys**, so a
 catalogue refresh (or a reciter temporarily missing upstream) never deletes user data. Schemas
-are exported to `app/schemas/`; destructive migration is never enabled — add a `Migration` to
+are exported to `app/schemas/` on build (commit `app/schemas/**/1.json` from your first local
+build and every later version — it is what migration tests compare against); destructive migration is never enabled — add a `Migration` to
 `AppDatabase.MIGRATIONS` for every version bump. Surah metadata is static code
 (`SurahCatalog`), preferences are DataStore.
 

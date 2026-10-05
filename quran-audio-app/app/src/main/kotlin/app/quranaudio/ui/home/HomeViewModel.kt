@@ -54,7 +54,7 @@ class HomeViewModel @Inject constructor(
         val heard = (mostIds + favourites.map { it.id }).toSet()
         val recommended = featured.filter { it.hasCompleteQuran && it.id !in heard }.take(8)
         HomeUiState(
-            loading = reciters.isEmpty() && status is SyncStatus.Refreshing,
+            loading = reciters.isEmpty() && status !is SyncStatus.Failed,
             status = status,
             catalogEmpty = reciters.isEmpty(),
             continueListening = recentEntries.firstOrNull { it.durationMs == null || it.positionMs < (it.durationMs - 10_000) } ?: recentEntries.firstOrNull(),
