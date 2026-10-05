@@ -2,48 +2,11 @@ name: quran-probe
 on:
   push:
     branches: [claude/quran-audio-android-app-jogbp4]
-    paths: ['.github/workflows/quran-probe.yml']
+    paths: ['.github/workflows/quran-probe.yml', '.github/scripts/probe.py']
   workflow_dispatch:
 jobs:
   probe:
     runs-on: ubuntu-latest
     steps:
-      - name: Library versions (Google Maven)
-        run: |
-          for g in com/android/tools/build androidx/compose androidx/compose/material3 androidx/media3 androidx/room androidx/datastore androidx/navigation androidx/hilt androidx/activity androidx/lifecycle androidx/core com/google/android/gms com/google/android/ump androidx/work androidx/test/ext androidx/test androidx/navigation3 androidx/room3 androidx/media; do
-            echo "== $g"; curl -s "https://dl.google.com/dl/android/maven2/$g/group-index.xml" | grep -E '<(gradle|room3-runtime|navigation3-runtime|media|compose-bom|material3|media3-exoplayer|media3-session|room-runtime|datastore-preferences|navigation-compose|hilt-navigation-compose|activity-compose|lifecycle-runtime-compose|core-ktx|core-splashscreen|play-services-ads|user-messaging-platform|work-runtime-ktx|junit|runner) ' | python3 -c "import sys,re
-for l in sys.stdin:
-  m=re.search(r'<([\w-]+) versions=\"([^\"]*)\"',l)
-  if m: print(m.group(1), [v for v in m.group(2).split(',') if not re.search('alpha|beta|rc|dev',v)][-4:])"
-
-          done
-          echo "== sdk"; curl -s https://dl.google.com/android/repository/repository2-3.xml | grep -oE 'platforms;android-[0-9]+|build-tools;[0-9.]+' | sort -uV | tail -8
-      - name: mp3quran v3
-        run: |
-          curl -sL -D - -o /tmp/r.json "https://mp3quran.net/api/v3/reciters?language=eng" | head -20
-          python3 - <<'PY'
-          import json
-          d=json.load(open('/tmp/r.json')); r=d['reciters']
-          print('keys', list(d.keys())); print('reciters', len(r))
-          print(json.dumps(r[0], ensure_ascii=False)[:1500])
-          comp=[x for x in r if any(int(m.get('surah_total',0))==114 for m in x['moshaf'])]
-          print('complete114', len(comp))
-          mt={}
-          for x in r:
-            for m in x['moshaf']: mt[m['name']]=mt.get(m['name'],0)+1
-          print(sorted(mt.items(), key=lambda kv:-kv[1])[:25])
-          hosts=set(m['server'].split('/')[2] for x in r for m in x['moshaf']); print('hosts', hosts)
-          PY
-          curl -sL "https://mp3quran.net/api/v3/suwar?language=eng" | head -c 600; echo
-          curl -sL "https://mp3quran.net/api/v3/riwayat?language=eng" | head -c 600; echo
-          curl -sL "https://mp3quran.net/api/v3/languages" | head -c 400; echo
-          curl -sIL "https://server8.mp3quran.net/afs/001.mp3" | head -15
-          curl -sL "https://mp3quran.net/api/v3/reciters?language=ar&reciter=123" | head -c 800; echo
-      - name: quran.com public v4
-        run: |
-          curl -s -D - "https://api.quran.com/api/v4/resources/chapter_reciters?language=en" | head -c 2500; echo
-          curl -s "https://api.quran.com/api/v4/chapter_recitations/7/1" | head -c 800; echo
-          curl -s "https://api.quran.com/api/v4/chapters?language=en" | head -c 700; echo
-      - name: quranicaudio
-        run: |
-          curl -s -D - "https://quranicaudio.com/api/qaris" | head -c 1500; echo
+      - uses: actions/checkout@v4
+      - run: python3 .github/scripts/probe.py
