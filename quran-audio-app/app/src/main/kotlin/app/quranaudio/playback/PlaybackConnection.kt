@@ -26,6 +26,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.retryWhen
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
@@ -134,7 +135,8 @@ class PlaybackConnection @Inject constructor(
             emit(PlaybackProgress(c.currentPosition, c.bufferedPosition, c.duration.takeIf { it != C.TIME_UNSET && it > 0 }))
             delay(if (c.isPlaying) 500 else 1_000)
         }
-    }.flowOn(Dispatchers.Main).distinctUntilChanged()
+    }.retryWhen { _, attempt -> delay(1_000L * (attempt + 1).coerceAtMost(5)); true }
+        .flowOn(Dispatchers.Main).distinctUntilChanged()
 
     // ---- Commands --------------------------------------------------------------------------
 
@@ -148,24 +150,31 @@ class PlaybackConnection @Inject constructor(
         val index = startIndex.coerceIn(0, tracks.lastIndex)
         val position = startPositionMs ?: library.savedPositionMs(tracks[index])
         val items = buildItems(tracks)
-        val c = ensureConnected()
-        if (shuffle != null) c.shuffleModeEnabled = shuffle
-        c.setMediaItems(items, index, position)
-        c.prepare()
-        c.play()
+        val c = runCatching { ensureConnected() }.getOrElse {
+            events.emit(PlaybackMessage.TRACK_UNAVAILABLE)
+            return false
+        }
+        withContext(Dispatchers.Main) {
+            if (shuffle != null) c.shuffleModeEnabled = shuffle
+            c.setMediaItems(items, index, position)
+            c.prepare()
+            c.play()
+        }
         prefs.setLastReciter(tracks[index].reciterId)
         return true
     }
 
     suspend fun addToQueue(tracks: List<Track>, playNext: Boolean = false) {
         if (tracks.isEmpty()) return
-        val c = ensureConnected()
+        val c = runCatching { ensureConnected() }.getOrNull() ?: return
         if (c.mediaItemCount == 0) {
             play(tracks)
             return
         }
         val items = buildItems(tracks)
-        if (playNext) c.addMediaItems(c.currentMediaItemIndex + 1, items) else c.addMediaItems(items)
+        withContext(Dispatchers.Main) {
+            if (playNext) c.addMediaItems(c.currentMediaItemIndex + 1, items) else c.addMediaItems(items)
+        }
     }
 
     private suspend fun buildItems(tracks: List<Track>): List<MediaItem> {

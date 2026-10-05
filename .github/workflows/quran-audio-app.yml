@@ -37,9 +37,25 @@ jobs:
       - uses: gradle/actions/setup-gradle@v5
       - name: Assemble debug + unit tests
         run: ./gradlew :app:assembleDebug :app:testDebugUnitTest --console=plain --continue
+      - name: Lint
+        run: ./gradlew :app:lintDebug --console=plain
+      - name: Release build (R8 minified, unsigned)
+        run: ./gradlew :app:assembleRelease --console=plain
+      - name: Verify no secrets in release APK
+        run: |
+          apk=$(ls app/build/outputs/apk/release/*.apk | head -1)
+          if unzip -p "$apk" 'classes*.dex' | strings | grep -iE 'client_secret|BEGIN (RSA )?PRIVATE KEY'; then echo "Secret-like string found"; exit 1; fi
+          ls -la app/build/outputs/apk/release/
+      - name: Upload debug APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: quran-audio-debug-apk
+          path: quran-audio-app/app/build/outputs/apk/debug/*.apk
       - name: Upload test reports
         if: failure()
         uses: actions/upload-artifact@v4
         with:
           name: android-test-reports
-          path: quran-audio-app/app/build/reports/tests/
+          path: |
+            quran-audio-app/app/build/reports/tests/
+            quran-audio-app/app/build/reports/lint-results-debug.html

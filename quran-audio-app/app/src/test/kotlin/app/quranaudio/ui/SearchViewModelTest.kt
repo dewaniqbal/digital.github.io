@@ -2,6 +2,7 @@ package app.quranaudio.ui
 
 import app.cash.turbine.test
 import app.quranaudio.data.TestGraph
+import app.quranaudio.ui.search.SearchUiState
 import app.quranaudio.ui.search.SearchViewModel
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.Dispatchers
@@ -34,13 +35,16 @@ class SearchViewModelTest {
         g.db.close()
     }
 
-    private suspend fun SearchViewModel.awaitResult(predicate: (app.quranaudio.ui.search.SearchUiState) -> Boolean) =
+    private suspend fun SearchViewModel.awaitResult(predicate: (SearchUiState) -> Boolean): SearchUiState {
+        var result: SearchUiState? = null
         state.test(timeout = 10.seconds) {
             var item = awaitItem()
             while (!predicate(item)) item = awaitItem()
+            result = item
             cancelAndIgnoreRemainingEvents()
-            item
         }
+        return result!!
+    }
 
     @Test fun `finds reciters surahs by name and number and reports empty`() = runTest {
         val vm = SearchViewModel(g.catalog, g.library)

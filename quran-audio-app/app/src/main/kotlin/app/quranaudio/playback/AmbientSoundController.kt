@@ -1,13 +1,14 @@
 package app.quranaudio.playback
 
+import android.content.ContentResolver
 import android.content.Context
+import android.net.Uri
 import androidx.annotation.OptIn
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.common.AudioAttributes
 import androidx.media3.common.C
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
-import androidx.media3.datasource.RawResourceDataSource
 import androidx.media3.exoplayer.ExoPlayer
 import app.quranaudio.data.prefs.UserPreferences
 import app.quranaudio.di.ApplicationScope
@@ -85,7 +86,7 @@ class AmbientSoundController @Inject constructor(
         _state.update { it.copy(selected = sound, enabled = true) }
         if (!wasSame) {
             ensurePlayer().apply {
-                setMediaItem(MediaItem.fromUri(RawResourceDataSource.buildRawResourceUri(sound.rawRes)))
+                setMediaItem(MediaItem.fromUri(Uri.Builder().scheme(ContentResolver.SCHEME_ANDROID_RESOURCE).path(sound.rawRes.toString()).build()))
                 prepare()
             }
         }

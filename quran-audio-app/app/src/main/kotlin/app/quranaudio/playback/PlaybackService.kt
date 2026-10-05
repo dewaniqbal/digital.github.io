@@ -252,11 +252,25 @@ class PlaybackService : MediaSessionService() {
         }
     }
 
+    /** Counts a play once per track start (not on every pause/resume). */
+    private var lastStartedKey: String? = null
+
+    private fun recordStartIfNew() {
+        val track = MediaItems.toTrack(player.currentMediaItem) ?: return
+        val key = "${track.key}@${player.currentMediaItemIndex}"
+        if (key == lastStartedKey) return
+        lastStartedKey = key
+        scope.launch { library.recordPlayStarted(track) }
+    }
+
     // ---- Player events ---------------------------------------------------------------------
 
     private inner class PlayerListener : Player.Listener {
         override fun onIsPlayingChanged(isPlaying: Boolean) {
-            if (isPlaying) startProgressLoop() else {
+            if (isPlaying) {
+                recordStartIfNew()
+                startProgressLoop()
+            } else {
                 progressJob?.cancel()
                 scope.launch { saveProgress() }
             }
@@ -288,13 +302,8 @@ class PlaybackService : MediaSessionService() {
         }
 
         override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
-            val track = MediaItems.toTrack(mediaItem) ?: return
-            if (reason != Player.MEDIA_ITEM_TRANSITION_REASON_PLAYLIST_CHANGED || player.playWhenReady) {
-                scope.launch {
-                    library.recordPlayStarted(track)
-                    lastSession.save(queueTracks(), player.currentMediaItemIndex, player.currentPosition)
-                }
-            }
+            if (player.isPlaying) recordStartIfNew()
+            scope.launch { lastSession.save(queueTracks(), player.currentMediaItemIndex, player.currentPosition) }
         }
 
         override fun onRepeatModeChanged(repeatMode: Int) {
