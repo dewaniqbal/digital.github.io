@@ -1,0 +1,73 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-10-16T00:00:00Z",
+  "sources": [],
+  "reciters": [
+    {
+      "id": "req-qari-mahmudul-hasan",
+      "nameEn": "Qari Mahmudul Hasan",
+      "alternateNames": [],
+      "recitations": []
+    },
+    {
+      "id": "req-saleh-ahmad-takrim",
+      "nameEn": "Saleh Ahmad Takrim",
+      "alternateNames": [],
+      "recitations": []
+    },
+    {
+      "id": "req-hafez-abu-rayhan",
+      "nameEn": "Hafez Abu Rayhan",
+      "alternateNames": [],
+      "recitations": []
+    },
+    {
+      "id": "req-nuruddin-muhammad-zakaria",
+      "nameEn": "Nuruddin Muhammad Zakaria",
+      "alternateNames": [],
+      "recitations": []
+    },
+    {
+      "id": "req-hafez-nazmus-sakib",
+      "nameEn": "Hafez Nazmus Sakib",
+      "alternateNames": [],
+      "recitations": []
+    },
+    {
+      "id": "req-saifur-rahman-taqi",
+      "nameEn": "Saifur Rahman Taqi",
+      "alternateNames": [],
+      "recitations": []
+    },
+    {
+      "id": "req-tarikul-islam",
+      "nameEn": "Tarikul Islam",
+      "alternateNames": [],
+      "recitations": []
+    },
+    {
+      "id": "req-helal-uddin",
+      "nameEn": "Helal Uddin",
+      "alternateNames": [],
+      "recitations": []
+    },
+    {
+      "id": "req-yakub-hossain-taj",
+      "nameEn": "Yakub Hossain Taj",
+      "alternateNames": [],
+      "recitations": []
+    },
+    {
+      "id": "req-saud-al-jumaa",
+      "nameEn": "Saud Al Jumaa",
+      "alternateNames": [],
+      "recitations": []
+    },
+    {
+      "id": "req-fazle-rabbi-adil",
+      "nameEn": "Fazle Rabbi Adil",
+      "alternateNames": [],
+      "recitations": []
+    }
+  ]
+}
