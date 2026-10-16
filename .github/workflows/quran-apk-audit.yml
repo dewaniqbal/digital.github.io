@@ -35,10 +35,13 @@ jobs:
           OUT="$RUNNER_TEMP/rea"; mkdir -p "$OUT"
           npx -y rea-agents@latest --version || true
           npx -y rea-agents@latest inspect-android-package "$APK" --json > "$OUT/package.json" 2> "$OUT/package.err" || { echo "package inspection failed"; tail -50 "$OUT/package.err"; }
-          for q in PlaybackService MainActivity QuranAudioApp BackendCatalogApi Mp3QuranDirectApi Catalog Mp3QuranRecitersResponse LastSession serializer HomeRoute AdsManager; do
+          for q in PlaybackService MainActivity QuranAudioApp Catalog LastSession serializer Mp3Quran RecitersResponse quranaudio.data.network quranaudio.ui.navigation; do
             npx -y rea-agents@latest search-android-classes "$APK" "$q" --json > "$OUT/search_$q.json" 2> "$OUT/search_$q.err" || tail -20 "$OUT/search_$q.err"
           done
           python3 ../.github/scripts/apk_audit.py "$OUT" "$APK"
+          echo "== raw search: RecitersResponse =="; head -c 3000 "$OUT/search_RecitersResponse.json"; echo
+          echo "== raw search: Mp3Quran =="; python3 -c "import json,sys,re; d=open(sys.argv[1]).read(); print(sorted(set(re.findall(r'app\\.quranaudio[A-Za-z0-9_.\$]*', d))))" "$OUT/search_Mp3Quran.json"
+          echo "== raw search: data.network =="; python3 -c "import json,sys,re; d=open(sys.argv[1]).read(); print(sorted(set(re.findall(r'app\\.quranaudio[A-Za-z0-9_.\$]*', d))))" "$OUT/search_quranaudio.data.network.json"
       - uses: actions/upload-artifact@v4
         if: always()
         with:
