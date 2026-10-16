@@ -1,0 +1,11 @@
+# Manual check of the live audio catalogue (counts, completeness, a sample HEAD request).
+# Run from the Actions tab before a release to confirm what the store listing may claim.
+name: quran-catalogue-check
+on:
+  workflow_dispatch:
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - run: python3 .github/scripts/probe.py

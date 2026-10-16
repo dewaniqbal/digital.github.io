@@ -1,0 +1,143 @@
+package app.quranaudio.shared.quran
+
+/**
+ * The 114 Surahs of the Quran.
+ *
+ * Source: Quran Foundation Content API v4 `GET /chapters?language=en` (fields `name_simple`,
+ * `name_arabic`, `verses_count`, `revelation_place`), captured on 2026-10-05.
+ * The verse counts follow the Kufan count (total 6236) used by the Hafs mushaf.
+ *
+ * This is static, public-domain metadata, so it is bundled with the app rather than fetched,
+ * which keeps the Surah list available offline and on first launch.
+ */
+object SurahCatalog {
+
+    const val SURAH_COUNT = 114
+    const val TOTAL_VERSES = 6236
+
+    val all: List<Surah> = listOf(
+        Surah(1, "Al-Fatihah", "الفاتحة", 7, RevelationPlace.MAKKAH),
+        Surah(2, "Al-Baqarah", "البقرة", 286, RevelationPlace.MADINAH),
+        Surah(3, "Ali 'Imran", "آل عمران", 200, RevelationPlace.MADINAH),
+        Surah(4, "An-Nisa", "النساء", 176, RevelationPlace.MADINAH),
+        Surah(5, "Al-Ma'idah", "المائدة", 120, RevelationPlace.MADINAH),
+        Surah(6, "Al-An'am", "الأنعام", 165, RevelationPlace.MAKKAH),
+        Surah(7, "Al-A'raf", "الأعراف", 206, RevelationPlace.MAKKAH),
+        Surah(8, "Al-Anfal", "الأنفال", 75, RevelationPlace.MADINAH),
+        Surah(9, "At-Tawbah", "التوبة", 129, RevelationPlace.MADINAH),
+        Surah(10, "Yunus", "يونس", 109, RevelationPlace.MAKKAH),
+        Surah(11, "Hud", "هود", 123, RevelationPlace.MAKKAH),
+        Surah(12, "Yusuf", "يوسف", 111, RevelationPlace.MAKKAH),
+        Surah(13, "Ar-Ra'd", "الرعد", 43, RevelationPlace.MADINAH),
+        Surah(14, "Ibrahim", "ابراهيم", 52, RevelationPlace.MAKKAH),
+        Surah(15, "Al-Hijr", "الحجر", 99, RevelationPlace.MAKKAH),
+        Surah(16, "An-Nahl", "النحل", 128, RevelationPlace.MAKKAH),
+        Surah(17, "Al-Isra", "الإسراء", 111, RevelationPlace.MAKKAH),
+        Surah(18, "Al-Kahf", "الكهف", 110, RevelationPlace.MAKKAH),
+        Surah(19, "Maryam", "مريم", 98, RevelationPlace.MAKKAH),
+        Surah(20, "Taha", "طه", 135, RevelationPlace.MAKKAH),
+        Surah(21, "Al-Anbya", "الأنبياء", 112, RevelationPlace.MAKKAH),
+        Surah(22, "Al-Hajj", "الحج", 78, RevelationPlace.MADINAH),
+        Surah(23, "Al-Mu'minun", "المؤمنون", 118, RevelationPlace.MAKKAH),
+        Surah(24, "An-Nur", "النور", 64, RevelationPlace.MADINAH),
+        Surah(25, "Al-Furqan", "الفرقان", 77, RevelationPlace.MAKKAH),
+        Surah(26, "Ash-Shu'ara", "الشعراء", 227, RevelationPlace.MAKKAH),
+        Surah(27, "An-Naml", "النمل", 93, RevelationPlace.MAKKAH),
+        Surah(28, "Al-Qasas", "القصص", 88, RevelationPlace.MAKKAH),
+        Surah(29, "Al-'Ankabut", "العنكبوت", 69, RevelationPlace.MAKKAH),
+        Surah(30, "Ar-Rum", "الروم", 60, RevelationPlace.MAKKAH),
+        Surah(31, "Luqman", "لقمان", 34, RevelationPlace.MAKKAH),
+        Surah(32, "As-Sajdah", "السجدة", 30, RevelationPlace.MAKKAH),
+        Surah(33, "Al-Ahzab", "الأحزاب", 73, RevelationPlace.MADINAH),
+        Surah(34, "Saba", "سبإ", 54, RevelationPlace.MAKKAH),
+        Surah(35, "Fatir", "فاطر", 45, RevelationPlace.MAKKAH),
+        Surah(36, "Ya-Sin", "يس", 83, RevelationPlace.MAKKAH),
+        Surah(37, "As-Saffat", "الصافات", 182, RevelationPlace.MAKKAH),
+        Surah(38, "Sad", "ص", 88, RevelationPlace.MAKKAH),
+        Surah(39, "Az-Zumar", "الزمر", 75, RevelationPlace.MAKKAH),
+        Surah(40, "Ghafir", "غافر", 85, RevelationPlace.MAKKAH),
+        Surah(41, "Fussilat", "فصلت", 54, RevelationPlace.MAKKAH),
+        Surah(42, "Ash-Shuraa", "الشورى", 53, RevelationPlace.MAKKAH),
+        Surah(43, "Az-Zukhruf", "الزخرف", 89, RevelationPlace.MAKKAH),
+        Surah(44, "Ad-Dukhan", "الدخان", 59, RevelationPlace.MAKKAH),
+        Surah(45, "Al-Jathiyah", "الجاثية", 37, RevelationPlace.MAKKAH),
+        Surah(46, "Al-Ahqaf", "الأحقاف", 35, RevelationPlace.MAKKAH),
+        Surah(47, "Muhammad", "محمد", 38, RevelationPlace.MADINAH),
+        Surah(48, "Al-Fath", "الفتح", 29, RevelationPlace.MADINAH),
+        Surah(49, "Al-Hujurat", "الحجرات", 18, RevelationPlace.MADINAH),
+        Surah(50, "Qaf", "ق", 45, RevelationPlace.MAKKAH),
+        Surah(51, "Adh-Dhariyat", "الذاريات", 60, RevelationPlace.MAKKAH),
+        Surah(52, "At-Tur", "الطور", 49, RevelationPlace.MAKKAH),
+        Surah(53, "An-Najm", "النجم", 62, RevelationPlace.MAKKAH),
+        Surah(54, "Al-Qamar", "القمر", 55, RevelationPlace.MAKKAH),
+        Surah(55, "Ar-Rahman", "الرحمن", 78, RevelationPlace.MADINAH),
+        Surah(56, "Al-Waqi'ah", "الواقعة", 96, RevelationPlace.MAKKAH),
+        Surah(57, "Al-Hadid", "الحديد", 29, RevelationPlace.MADINAH),
+        Surah(58, "Al-Mujadila", "المجادلة", 22, RevelationPlace.MADINAH),
+        Surah(59, "Al-Hashr", "الحشر", 24, RevelationPlace.MADINAH),
+        Surah(60, "Al-Mumtahanah", "الممتحنة", 13, RevelationPlace.MADINAH),
+        Surah(61, "As-Saf", "الصف", 14, RevelationPlace.MADINAH),
+        Surah(62, "Al-Jumu'ah", "الجمعة", 11, RevelationPlace.MADINAH),
+        Surah(63, "Al-Munafiqun", "المنافقون", 11, RevelationPlace.MADINAH),
+        Surah(64, "At-Taghabun", "التغابن", 18, RevelationPlace.MADINAH),
+        Surah(65, "At-Talaq", "الطلاق", 12, RevelationPlace.MADINAH),
+        Surah(66, "At-Tahrim", "التحريم", 12, RevelationPlace.MADINAH),
+        Surah(67, "Al-Mulk", "الملك", 30, RevelationPlace.MAKKAH),
+        Surah(68, "Al-Qalam", "القلم", 52, RevelationPlace.MAKKAH),
+        Surah(69, "Al-Haqqah", "الحاقة", 52, RevelationPlace.MAKKAH),
+        Surah(70, "Al-Ma'arij", "المعارج", 44, RevelationPlace.MAKKAH),
+        Surah(71, "Nuh", "نوح", 28, RevelationPlace.MAKKAH),
+        Surah(72, "Al-Jinn", "الجن", 28, RevelationPlace.MAKKAH),
+        Surah(73, "Al-Muzzammil", "المزمل", 20, RevelationPlace.MAKKAH),
+        Surah(74, "Al-Muddaththir", "المدثر", 56, RevelationPlace.MAKKAH),
+        Surah(75, "Al-Qiyamah", "القيامة", 40, RevelationPlace.MAKKAH),
+        Surah(76, "Al-Insan", "الانسان", 31, RevelationPlace.MADINAH),
+        Surah(77, "Al-Mursalat", "المرسلات", 50, RevelationPlace.MAKKAH),
+        Surah(78, "An-Naba", "النبإ", 40, RevelationPlace.MAKKAH),
+        Surah(79, "An-Nazi'at", "النازعات", 46, RevelationPlace.MAKKAH),
+        Surah(80, "'Abasa", "عبس", 42, RevelationPlace.MAKKAH),
+        Surah(81, "At-Takwir", "التكوير", 29, RevelationPlace.MAKKAH),
+        Surah(82, "Al-Infitar", "الإنفطار", 19, RevelationPlace.MAKKAH),
+        Surah(83, "Al-Mutaffifin", "المطففين", 36, RevelationPlace.MAKKAH),
+        Surah(84, "Al-Inshiqaq", "الإنشقاق", 25, RevelationPlace.MAKKAH),
+        Surah(85, "Al-Buruj", "البروج", 22, RevelationPlace.MAKKAH),
+        Surah(86, "At-Tariq", "الطارق", 17, RevelationPlace.MAKKAH),
+        Surah(87, "Al-A'la", "الأعلى", 19, RevelationPlace.MAKKAH),
+        Surah(88, "Al-Ghashiyah", "الغاشية", 26, RevelationPlace.MAKKAH),
+        Surah(89, "Al-Fajr", "الفجر", 30, RevelationPlace.MAKKAH),
+        Surah(90, "Al-Balad", "البلد", 20, RevelationPlace.MAKKAH),
+        Surah(91, "Ash-Shams", "الشمس", 15, RevelationPlace.MAKKAH),
+        Surah(92, "Al-Layl", "الليل", 21, RevelationPlace.MAKKAH),
+        Surah(93, "Ad-Duhaa", "الضحى", 11, RevelationPlace.MAKKAH),
+        Surah(94, "Ash-Sharh", "الشرح", 8, RevelationPlace.MAKKAH),
+        Surah(95, "At-Tin", "التين", 8, RevelationPlace.MAKKAH),
+        Surah(96, "Al-'Alaq", "العلق", 19, RevelationPlace.MAKKAH),
+        Surah(97, "Al-Qadr", "القدر", 5, RevelationPlace.MAKKAH),
+        Surah(98, "Al-Bayyinah", "البينة", 8, RevelationPlace.MADINAH),
+        Surah(99, "Az-Zalzalah", "الزلزلة", 8, RevelationPlace.MADINAH),
+        Surah(100, "Al-'Adiyat", "العاديات", 11, RevelationPlace.MAKKAH),
+        Surah(101, "Al-Qari'ah", "القارعة", 11, RevelationPlace.MAKKAH),
+        Surah(102, "At-Takathur", "التكاثر", 8, RevelationPlace.MAKKAH),
+        Surah(103, "Al-'Asr", "العصر", 3, RevelationPlace.MAKKAH),
+        Surah(104, "Al-Humazah", "الهمزة", 9, RevelationPlace.MAKKAH),
+        Surah(105, "Al-Fil", "الفيل", 5, RevelationPlace.MAKKAH),
+        Surah(106, "Quraysh", "قريش", 4, RevelationPlace.MAKKAH),
+        Surah(107, "Al-Ma'un", "الماعون", 7, RevelationPlace.MAKKAH),
+        Surah(108, "Al-Kawthar", "الكوثر", 3, RevelationPlace.MAKKAH),
+        Surah(109, "Al-Kafirun", "الكافرون", 6, RevelationPlace.MAKKAH),
+        Surah(110, "An-Nasr", "النصر", 3, RevelationPlace.MADINAH),
+        Surah(111, "Al-Masad", "المسد", 5, RevelationPlace.MAKKAH),
+        Surah(112, "Al-Ikhlas", "الإخلاص", 4, RevelationPlace.MAKKAH),
+        Surah(113, "Al-Falaq", "الفلق", 5, RevelationPlace.MAKKAH),
+        Surah(114, "An-Nas", "الناس", 6, RevelationPlace.MAKKAH),
+    )
+
+    private val byNumber = all.associateBy { it.number }
+
+    fun get(number: Int): Surah =
+        byNumber[number] ?: throw IllegalArgumentException("Surah number must be 1..114, was $number")
+
+    fun getOrNull(number: Int): Surah? = byNumber[number]
+
+    fun isValid(number: Int): Boolean = number in 1..SURAH_COUNT
+}
