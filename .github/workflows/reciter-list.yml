@@ -10,7 +10,7 @@ jobs:
     steps:
       - name: Print mp3quran.net reciters (id, name, riwaya, surah count)
         run: |
-          curl -fsS "https://mp3quran.net/api/v3/reciters?language=eng" -o r.json
+          curl -fsSL -A "Mozilla/5.0" "https://www.mp3quran.net/api/v3/reciters?language=eng" -o r.json; head -c 200 r.json; echo
           python3 - <<'PY'
           import json
           d=json.load(open('r.json'))['reciters']
