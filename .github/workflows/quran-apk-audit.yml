@@ -39,28 +39,19 @@ jobs:
             npx -y rea-agents@latest search-android-classes "$APK" "$q" --json > "$OUT/search_$q.json" 2> "$OUT/search_$q.err" || tail -20 "$OUT/search_$q.err"
           done
           python3 ../.github/scripts/apk_audit.py "$OUT" "$APK"
-          python3 - "$OUT" <<'PY'
-          import sys, re, os
-          out = sys.argv[1]
-          text = " ".join(open(os.path.join(out, f)).read() for f in os.listdir(out) if f.startswith("search_") and f.endswith(".json"))
-          required = [
-              "app.quranaudio.shared.source.Mp3QuranRecitersResponse$$serializer",
-              "app.quranaudio.shared.catalog.Catalog$$serializer",
-              "app.quranaudio.data.network.Mp3QuranDirectApi",
-              "app.quranaudio.data.network.BackendCatalogApi",
-              "app.quranaudio.playback.PlaybackService",
-          ]
-          missing = [c for c in required if c not in text]
-          print("R8 keep check:", "OK" if not missing else f"MISSING {missing}")
-          sys.exit(1 if missing else 0)
-          PY
-      - name: Cross-check with dexdump (authoritative class list)
-        if: always()
+      - name: R8 keep check (dexdump, authoritative class list)
         run: |
           APK="$(ls app/build/outputs/apk/release/*.apk | head -1)"
           DEXDUMP="$(ls -d $ANDROID_HOME/build-tools/*/ | sort -V | tail -1)dexdump"
           mkdir -p "$RUNNER_TEMP/dex" && unzip -o -q "$APK" 'classes*.dex' -d "$RUNNER_TEMP/dex"
-          for d in "$RUNNER_TEMP"/dex/*.dex; do "$DEXDUMP" "$d"; done | grep -E "Class descriptor.*Lapp/quranaudio/(shared|data/network)" | sort -u | tee "$RUNNER_TEMP/rea/dex_classes.txt"
+          for d in "$RUNNER_TEMP"/dex/*.dex; do "$DEXDUMP" "$d"; done | grep -E "Class descriptor.*Lapp/quranaudio/" | sort -u > "$RUNNER_TEMP/rea/dex_classes.txt"
+          # Classes reached only by reflection must survive R8 with their names (fails the job otherwise).
+          missing=0
+          for c in shared/source/Mp3QuranRecitersResponse\$\$serializer shared/catalog/Catalog\$\$serializer \
+                   data/network/Mp3QuranDirectApi data/network/BackendCatalogApi playback/PlaybackService playback/LastSession\$\$serializer; do
+            if grep -qF "Lapp/quranaudio/$c;" "$RUNNER_TEMP/rea/dex_classes.txt"; then echo "kept: $c"; else echo "MISSING: $c"; missing=1; fi
+          done
+          exit $missing
       - uses: actions/upload-artifact@v4
         if: always()
         with:
