@@ -1,0 +1,46 @@
+# Static audit of the shipped (R8-minified) release APK with REA (Reverse Engineer Anything)
+# + JADX. Answers: what does the APK declare, and did R8 keep the classes the app needs at runtime?
+name: quran-apk-audit
+on:
+  workflow_dispatch:
+  push:
+    branches: [claude/quran-audio-android-app-jogbp4]
+    paths: ['.github/workflows/quran-apk-audit.yml', '.github/scripts/apk_audit.py']
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: quran-audio-app
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-java@v5
+        with: { distribution: temurin, java-version: '21' }
+      - uses: actions/setup-node@v5
+        with: { node-version: '24' }
+      - uses: gradle/actions/setup-gradle@v5
+      - name: Build release APK (minified)
+        run: ./gradlew :app:assembleRelease --console=plain
+      - name: Fetch pinned JADX headless engine
+        run: |
+          mkdir -p "$RUNNER_TEMP/jadx" && cd "$RUNNER_TEMP/jadx"
+          curl -fsSL -o jadx.jar https://github.com/1013503897/jadx-headless-mcp/releases/download/v0.7.1/jadx-headless-mcp-0.7.1-all.jar
+          echo '6e5eacf500b64292bfb73c49797c1958f6ee44646e43e868039ae7feb573ff75  jadx.jar' | sha256sum -c -
+          echo "REA_JADX_MCP_JAR=$PWD/jadx.jar" >> "$GITHUB_ENV"
+      - name: REA analysis
+        env:
+          REA_JADX_OPERATION_TIMEOUT_MS: '600000'
+        run: |
+          APK="$PWD/$(ls app/build/outputs/apk/release/*.apk | head -1)"
+          OUT="$RUNNER_TEMP/rea"; mkdir -p "$OUT"
+          npx -y rea-agents@latest --version || true
+          npx -y rea-agents@latest inspect-android-package "$APK" --json > "$OUT/package.json" 2> "$OUT/package.err" || { echo "package inspection failed"; tail -50 "$OUT/package.err"; }
+          for q in PlaybackService MainActivity QuranAudioApp BackendCatalogApi Mp3QuranDirectApi Catalog Mp3QuranRecitersResponse LastSession serializer HomeRoute AdsManager; do
+            npx -y rea-agents@latest search-android-classes "$APK" "$q" --json > "$OUT/search_$q.json" 2> "$OUT/search_$q.err" || tail -20 "$OUT/search_$q.err"
+          done
+          python3 ../.github/scripts/apk_audit.py "$OUT" "$APK"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: rea-apk-audit
+          path: ${{ runner.temp }}/rea/
