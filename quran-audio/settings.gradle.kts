@@ -15,7 +15,7 @@ dependencyResolutionManagement {
 
 rootProject.name = "quran-audio"
 
-// Milestone 1: JVM-only domain modules (buildable without the Android SDK).
-// Android modules are listed in docs/ARCHITECTURE.md and are added feature by feature.
+// Milestone 2: app shell + JVM domain modules. Further Android modules are added feature by feature.
+include(":app")
 include(":core:model")
 include(":core:common")
