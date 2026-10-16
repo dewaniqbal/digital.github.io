@@ -54,6 +54,13 @@ jobs:
           print("R8 keep check:", "OK" if not missing else f"MISSING {missing}")
           sys.exit(1 if missing else 0)
           PY
+      - name: Cross-check with dexdump (authoritative class list)
+        if: always()
+        run: |
+          APK="$(ls app/build/outputs/apk/release/*.apk | head -1)"
+          DEXDUMP="$(ls -d $ANDROID_HOME/build-tools/*/ | sort -V | tail -1)dexdump"
+          mkdir -p "$RUNNER_TEMP/dex" && unzip -o -q "$APK" 'classes*.dex' -d "$RUNNER_TEMP/dex"
+          for d in "$RUNNER_TEMP"/dex/*.dex; do "$DEXDUMP" "$d"; done | grep -E "Class descriptor.*Lapp/quranaudio/(shared|data/network)" | sort -u | tee "$RUNNER_TEMP/rea/dex_classes.txt"
       - uses: actions/upload-artifact@v4
         if: always()
         with:
