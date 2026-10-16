@@ -1,0 +1,22 @@
+name: reciter-list
+on:
+  push:
+    branches: [claude/blissful-albattani-6lnmh8]
+    paths: ['.github/workflows/reciter-list.yml']
+  workflow_dispatch:
+jobs:
+  list:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print mp3quran.net reciters (id, name, riwaya, surah count)
+        run: |
+          curl -fsS "https://mp3quran.net/api/v3/reciters?language=eng" -o r.json
+          python3 - <<'PY'
+          import json
+          d=json.load(open('r.json'))['reciters']
+          print("TOTAL", len(d))
+          for r in d:
+              m=r.get('moshaf') or []
+              best=max(m,key=lambda x:x.get('surah_total',0),default={})
+              print(f"{r['id']}|{r['name']}|{best.get('surah_total',0)}")
+          PY
